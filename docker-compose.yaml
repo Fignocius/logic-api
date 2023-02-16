@@ -1,0 +1,29 @@
+version : "3"
+
+services:
+  api:
+    image: api
+    build: .
+    env_file: 
+      - .env
+    volumes:
+      - "./api/api:/api"
+    command: ./api
+    expose:
+      - "8080"
+      - "8383"
+    ports: 
+      - "8383:8080"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:10
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "logic-api"
+    expose:
+      - "5432"
+    ports: 
+      - "15432:5432"
