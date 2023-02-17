@@ -123,7 +123,7 @@ expressão escolhida:
 ```
 request:
 ```http
-  Delete localhost:8383/expressions/b3d16a66-e711-4170-ae56-e503f4fe204a?x=1&y=0&z=1
+  Delete localhost:8383/expressions/b3d16a66-e711-4170-ae56-e503f4fe204a
 ```
 response:
 ```html
