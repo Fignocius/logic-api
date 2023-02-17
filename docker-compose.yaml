@@ -27,3 +27,15 @@ services:
       - "5432"
     ports: 
       - "15432:5432"
+
+  postgres_test:
+    image: postgres:10
+    restart: always
+    network_mode: bridge
+    environment:
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "logic-api-test"
+    expose:
+      - "5432"
+    ports: 
+      - "5433:5432"

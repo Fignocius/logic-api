@@ -48,6 +48,7 @@ func (s Logic) Upsert(logic model.Logic) (logicSave model.Logic, err error) {
 		logicSave = logic
 		return
 	}
+	dbLogic.Expression = logic.Expression
 	dbLogic.ExpressionCode = regex.ReplaceAllString(logic.Expression, "?")
 	if err = s.Repository.Update(dbLogic); err != nil {
 		return
