@@ -13,7 +13,7 @@ Para fazer o deploy desse projeto rode
   make local-start
 ```
 
-após iniciado os container é necessário executar as migrations
+após iniciado os containers é necessário executar as migrations
 
 ```bash
   DATABASE_URL=postgres://postgres:postgres@localhost:15432/logic-api?sslmode=disable make migrate
