@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"time"
+
 	sq "github.com/Masterminds/squirrel"
 	"github.com/fignocius/logic-api/api/model"
 	"github.com/jmoiron/sqlx"
@@ -17,29 +19,13 @@ func NewLogicsRepository(db *sqlx.DB) LogicRepository {
 	}
 }
 
-func (t Logic) Apply(id uuid.UUID, queryParams []interface{}) (result bool, err error) {
-	var logic model.Logic
+func (r Logic) Apply(expressionCode string, queryParams []interface{}) (result bool, err error) {
 
-	query := psql.Select("*").
-		From("logics").
-		Where(sq.Eq{"id": id})
-
-	statement, args, err := query.ToSql()
+	statement, _, err := psql.Select(expressionCode).ToSql()
 	if err != nil {
 		return
 	}
-	stmt, err := t.db.Preparex(statement)
-	if err != nil {
-		return
-	}
-	if err = stmt.Get(&logic, args...); err != nil {
-		return
-	}
-	statement, _, err = psql.Select(logic.ExpresionCode).ToSql()
-	if err != nil {
-		return
-	}
-	stmt, err = t.db.Preparex(statement)
+	stmt, err := r.db.Preparex(statement)
 	if err != nil {
 		return
 	}
@@ -80,7 +66,7 @@ func (r Logic) Create(logic model.Logic) (err error) {
 		Values(
 			logic.ID,
 			logic.Expression,
-			logic.ExpresionCode,
+			logic.ExpressionCode,
 		)
 	statement, args, err := query.ToSql()
 	if err != nil {
@@ -100,8 +86,8 @@ func (r Logic) Create(logic model.Logic) (err error) {
 func (r Logic) Update(logic model.Logic) (err error) {
 	query := psql.Update("logics").
 		Set("expression", logic.Expression).
-		Set("expression_code", logic.ExpresionCode).
-		Set("updated_at", logic.UpdatedAt).
+		Set("expression_code", logic.ExpressionCode).
+		Set("updated_at", time.Now().UTC()).
 		Where(sq.Eq{"id": logic.ID})
 	statement, args, err := query.ToSql()
 	if err != nil {

@@ -35,6 +35,6 @@ func main() {
 	e.GET("/evaluate/:expression_id", logicHandler.Apply)
 	e.DELETE("/expressions/:expression_id", logicHandler.Delete)
 	e.GET("/expressions", logicHandler.List)
-	e.POST("/expressions", logicHandler.UpInsert)
+	e.POST("/expressions", logicHandler.Upsert)
 	e.Logger.Fatal(e.Start(":8080"))
 }

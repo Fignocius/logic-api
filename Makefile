@@ -14,13 +14,23 @@ test:
 	go test -covermode=count -coverprofile=count.out ./...
 
 deps:
-	go mod tidy
 	go mod download
+	go mod tidy
 
-build: build-command
+mockery:
+	go install github.com/vektra/mockery/v2@latest
 
-build-command:
-	# Running on windows set env to linux builder $Env:GOOS = "linux"; $Env:GOARCH = "amd64"; $Env:CGO_ENABLED = 0
+mock:
+	mockery
+	@rm -rf mocks
+	mockery --dir api/service --all
+	mockery --dir api/repository --all
+
+
+build: 
+	go build -o api/api ./api/main.go
+
+build-linux:
 	$(LINUX_AMD64) go build -o api/api ./api/main.go
 	
 build-image:
@@ -28,19 +38,22 @@ build-image:
 	@make build
 	docker build -t $(PROJECT_NAME) .
 
+
+# Running on windows set env to linux builder $Env:GOOS = "linux"; $Env:GOARCH = "amd64"; $Env:CGO_ENABLED = 0
 local-start:
-	build
+	@make build
 	@docker-compose up
 
 golang-migrate:
 	go install github.com/golang-migrate/migrate/v4/cmd/migrate github.com/lib/pq github.com/hashicorp/go-multierror
 	@go build -tags 'postgres' -o ${GOPATH}/bin/migrate github.com/golang-migrate/migrate/v4/cmd/migrate
 
+
+# Connection string parameters documentation: https://godoc.org/github.com/lib/pq#hdr-Connection_String_Parameters
+# Usage: DATABASE_URL=postgres://postgres:postgres@localhost:15432/logic-api?sslmode=disable make migrate
 migrate: golang-migrate
-	# Connection string parameters documentation: https://godoc.org/github.com/lib/pq#hdr-Connection_String_Parameters
-	# Usage: DATABASE_URL=postgres://postgres:postgres@localhost:15432/logic-api?sslmode=disable make migrate
 	migrate -path migrations/ -database ${DATABASE_URL} up
 
+# Usage: make migration name=my_migration
 migration: golang-migrate
-	# Usage: make migration name=my_migration
 	migrate create -dir migrations/ -ext sql ${name}

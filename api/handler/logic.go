@@ -29,13 +29,17 @@ func (t Logic) List(c echo.Context) error {
 	return c.JSON(http.StatusOK, logics)
 }
 
-func (t Logic) UpInsert(c echo.Context) error {
+func (t Logic) Upsert(c echo.Context) error {
 	request := model.Logic{}
 	err := c.Bind(&request)
 	if err != nil {
 		return echo.ErrBadRequest
 	}
-	products, err := t.LogicService.UpInsert(request)
+	err = request.Validate()
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+	products, err := t.LogicService.Upsert(request)
 	if err != nil {
 		c.Logger().Error(err)
 		return echo.ErrInternalServerError
@@ -52,7 +56,7 @@ func (t Logic) Apply(c echo.Context) error {
 	products, err := t.LogicService.Apply(id, query)
 	if err != nil {
 		c.Logger().Error(err)
-		return echo.ErrInternalServerError
+		return err
 	}
 	return c.JSON(http.StatusOK, products)
 }

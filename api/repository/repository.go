@@ -9,7 +9,7 @@ import (
 var psql = sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 
 type LogicRepository interface {
-	Apply(uuid.UUID, []interface{}) (bool, error)
+	Apply(string, []interface{}) (bool, error)
 	List() ([]model.Logic, error)
 	Create(model.Logic) error
 	Update(model.Logic) error
