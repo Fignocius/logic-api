@@ -30,7 +30,7 @@ build:
 # Running on windows set env to linux builder $Env:GOOS = "linux"; $Env:GOARCH = "amd64"; $Env:CGO_ENABLED = 0
 local-start:
 	build
-	@docker-compose up
+	@docker-compose up api
 
 golang-migrate:
 	go install github.com/golang-migrate/migrate/v4/cmd/migrate github.com/lib/pq github.com/hashicorp/go-multierror
